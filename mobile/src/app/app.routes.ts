@@ -1,0 +1,2 @@
+import type { Routes } from '@angular/router';
+export const routes:Routes=[{path:'scanner',loadComponent:()=>import('./features/scanner/scanner.page').then(m=>m.ScannerPage)},{path:'result/:id',loadComponent:()=>import('./features/result/result.page').then(m=>m.ResultPage)},{path:'history',loadComponent:()=>import('./features/history/history.page').then(m=>m.HistoryPage)},{path:'',pathMatch:'full',redirectTo:'scanner'},{path:'**',redirectTo:'scanner'}];

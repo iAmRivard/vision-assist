@@ -1,0 +1,26 @@
+name: Proponer una mejora
+description: Sugiera una función o mejora de accesibilidad.
+title: "[Mejora]: "
+labels: [enhancement, triage]
+body:
+  - type: textarea
+    id: problem
+    attributes:
+      label: Problema
+      description: ¿Qué necesidad concreta resolvería?
+    validations:
+      required: true
+  - type: textarea
+    id: proposal
+    attributes:
+      label: Propuesta
+      description: Describa el comportamiento deseado, no sólo la implementación.
+    validations:
+      required: true
+  - type: textarea
+    id: impact
+    attributes:
+      label: Accesibilidad y privacidad
+      description: ¿A quién ayuda y qué datos procesaría?
+    validations:
+      required: true

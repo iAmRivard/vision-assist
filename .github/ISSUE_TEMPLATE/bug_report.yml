@@ -1,0 +1,38 @@
+name: Reportar un error
+description: Ayúdenos a reproducir y corregir un problema.
+title: "[Bug]: "
+labels: [bug, triage]
+body:
+  - type: textarea
+    id: description
+    attributes:
+      label: Descripción
+      description: ¿Qué ocurrió y qué esperaba que ocurriera?
+    validations:
+      required: true
+  - type: textarea
+    id: steps
+    attributes:
+      label: Pasos para reproducirlo
+      placeholder: "1. Abra…\n2. Pulse…\n3. Observe…"
+    validations:
+      required: true
+  - type: input
+    id: environment
+    attributes:
+      label: Entorno
+      description: Versión, dispositivo, Android/navegador y método de instalación.
+    validations:
+      required: true
+  - type: textarea
+    id: accessibility
+    attributes:
+      label: Contexto de accesibilidad
+      description: Indique lector de pantalla u otra tecnología de apoyo si es relevante. No incluya datos personales.
+  - type: checkboxes
+    id: safety
+    attributes:
+      label: Privacidad
+      options:
+        - label: Confirmo que eliminé claves, imágenes de usuarios y datos personales.
+          required: true

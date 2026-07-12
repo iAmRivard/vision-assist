@@ -1,0 +1,27 @@
+node_modules/
+dist/
+www/
+.env
+.env.*
+!.env.example
+server/.env copy.example
+.angular/
+coverage/
+*.log
+.postgres-data/
+.certs/
+
+# OS and editor files
+.DS_Store
+Thumbs.db
+.idea/
+.vscode/
+*.swp
+
+# Native build outputs and local signing material
+mobile/android/.gradle/
+mobile/android/build/
+mobile/android/app/build/
+mobile/android/local.properties
+*.jks
+*.keystore

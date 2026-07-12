@@ -1,0 +1,3 @@
+import { FrameAnalysisService } from './frame-analysis.service';
+const image=(pixels:number[],w=2,h=2)=>new ImageData(new Uint8ClampedArray(pixels.flatMap(v=>[v,v,v,255])),w,h);
+describe('FrameAnalysisService',()=>{const service=new FrameAnalysisService();it('detects stable identical frames',()=>{const a=image([0,255,0,255]);expect(service.measure(a,a).motionScore).toBe(0)});it('measures changed pixels',()=>{const a=image([0,255,0,255]),b=image([255,0,255,0]);expect(service.measure(b,a).motionScore).toBe(1)});it('compares perceptual hashes',()=>expect(service.hashDistance('1010','1000')).toBe(1));});
