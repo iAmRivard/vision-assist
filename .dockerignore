@@ -1,0 +1,15 @@
+.git
+.github
+.npm-cache
+node_modules
+**/node_modules
+**/dist
+**/www
+**/.angular
+**/coverage
+**/.env*
+!**/.env.example
+mobile/android/.gradle
+mobile/android/build
+mobile/android/app/build
+*.log

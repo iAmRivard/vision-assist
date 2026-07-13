@@ -6,6 +6,7 @@ www/
 !.env.example
 server/.env copy.example
 .angular/
+.npm-cache/
 coverage/
 *.log
 .postgres-data/

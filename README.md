@@ -14,7 +14,7 @@ VisionAssist es software libre bajo licencia MIT. Consulte [CONTRIBUTING.md](CON
 
 ## Requisitos
 
-- Node.js 20.19 o superior y npm 10
+- Node.js 22.22.3 o superior y npm 10
 - Docker con Compose (o PostgreSQL 14+)
 - Android Studio, JDK 21 y Android SDK para compilar Android
 - Dispositivo Android o emulador con cámara
@@ -43,7 +43,19 @@ Configure `VISION_API_KEY`; nunca copie esa clave en `mobile`. Variables disponi
 | `CORS_ORIGIN` | Orígenes separados por coma |
 | `ANALYZE_RATE_LIMIT_PER_MINUTE` | Límite por IP |
 
-Para PostgreSQL sin Docker, cree la base indicada por `DATABASE_URL` y ejecute `server/src/database/migrations/001_create_vision_analyses.sql`.
+Para PostgreSQL sin Docker, cree la base indicada por `DATABASE_URL` y ejecute, en orden, las migraciones de `server/src/database/migrations`.
+
+## Despliegue en Dokploy
+
+El `Dockerfile` de la raíz compila el backend y la PWA en un único contenedor. Express sirve la PWA y las rutas `/api/v1`, por lo que sólo se necesita una Application de Dokploy:
+
+1. Seleccione build type `Dockerfile`, ruta `Dockerfile` y contexto `.`.
+2. Exponga el puerto interno `3000` y asigne el dominio HTTPS `vision.rivasystems.dev`.
+3. Configure las variables de `server/.env.example`, usando la URL de PostgreSQL externa. En producción, `CLIENT_ID_HASH_SECRET` debe ser un secreto aleatorio de al menos 32 caracteres.
+4. Configure el healthcheck en `/api/v1/health`.
+5. Ejecute las migraciones `001` y `002` contra PostgreSQL antes del primer despliegue.
+
+La PWA usa `/api/v1` en el mismo origen y Android usa `https://vision.rivasystems.dev/api/v1`. En Dokploy configure `CORS_ORIGIN=https://vision.rivasystems.dev,https://localhost` antes de ejecutar `npm run cap:sync -w mobile`.
 
 ## Ionic en navegador
 

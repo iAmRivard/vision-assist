@@ -18,11 +18,20 @@
             "browser": "src/main.ts",
             "polyfills": ["zone.js"],
             "tsConfig": "tsconfig.app.json",
-            "assets": ["src/assets"],
+            "assets": [
+              "src/assets",
+              "src/manifest.webmanifest",
+              {
+                "glob": "ic_launcher.png",
+                "input": "android/app/src/main/res/mipmap-xxxhdpi",
+                "output": "assets/icons"
+              }
+            ],
             "styles": ["src/global.scss"]
           },
           "configurations": {
             "production": {
+              "serviceWorker": "ngsw-config.json",
               "outputHashing": "all",
               "budgets": [
                 {
