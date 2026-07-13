@@ -93,7 +93,7 @@ curl http://localhost:3000/api/v1/health
 
 Todos los umbrales están en `mobile/src/app/core/config/vision.config.ts`: intervalo, movimiento máximo (0.03), estabilidad (1000 ms), exposición, varianza, nitidez, cooldown (4000 ms), calidad JPEG y distancia de hash. La captura manual ignora la deduplicación, pero no permite solicitudes simultáneas.
 
-El escáner inicia pausado y solicita la cámara selfie con fallback automático. Una palma abierta sostenida alterna el análisis; el botón visible ofrece el mismo control. MediaPipe procesa los landmarks localmente y descarga sus archivos WASM/modelo la primera vez que se utiliza.
+El escáner inicia pausado y solicita la cámara selfie con fallback automático. El botón visible permite comenzar o pausar el análisis.
 
 ## Calidad y pruebas
 

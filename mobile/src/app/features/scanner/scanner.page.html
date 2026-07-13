@@ -2,12 +2,10 @@
   <video #video playsinline muted></video><canvas #analysisCanvas width="320" height="240"></canvas><div class="shade"></div>
   <div class="top"><span class="brand">VisionAssist</span><a routerLink="/history" aria-label="Historial"><ion-icon name="albums-outline"></ion-icon></a></div>
   <div class="mode" [class.active]="processingEnabled"><i></i>{{processingEnabled ? 'Análisis activo' : 'Análisis pausado'}}</div>
-  <div class="gesture" [class.seen]="voiceListening">🎙️ {{voiceMessage || (voiceListening ? 'Decí “comenzar análisis”' : 'Control de voz inactivo')}}</div>
   <div class="guide" [attr.data-state]="state"><span></span></div><div class="flash" [class.on]="flash"></div>
   <section class="status"><div class="state">{{message}}</div><div class="progress"><i [style.width.%]="stability*100"></i></div><small *ngIf="metrics && processingEnabled">Luz {{metrics.brightness | number:'1.0-0'}} · Movimiento {{metrics.motionScore | percent:'1.0-0'}}</small><ion-spinner *ngIf="state==='ANALYZING'"></ion-spinner><p class="error" *ngIf="state==='ERROR'">{{error}}</p></section>
   <footer>
     <ion-button class="process-toggle" size="small" [color]="processingEnabled ? 'warning' : 'success'" (click)="toggleProcessing()">{{processingEnabled ? 'Pausar análisis' : 'Comenzar análisis'}}</ion-button>
-    <ion-button *ngIf="voiceAvailable && !voiceListening" fill="clear" size="small" (click)="startVoice()">Activar comandos de voz</ion-button>
     <label>Captura automática <ion-toggle [(ngModel)]="autoCapture"></ion-toggle></label>
     <div class="actions"><ion-button fill="clear" (click)="switchCamera()"><ion-icon name="swap-horizontal-outline" slot="icon-only"></ion-icon></ion-button><ion-button class="capture" (click)="capture(true)" [disabled]="processing"><ion-icon name="camera-outline" slot="icon-only"></ion-icon></ion-button><ion-button fill="clear" routerLink="/history"><ion-icon name="albums-outline" slot="icon-only"></ion-icon></ion-button></div>
     <ion-button *ngIf="state==='ERROR'" size="small" (click)="retry()">Reintentar</ion-button>
