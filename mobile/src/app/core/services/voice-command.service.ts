@@ -74,10 +74,11 @@ export class VoiceCommandService {
   }
 
   private handleError(error: string) {
-    if (error === 'not-allowed' || error === 'service-not-allowed') {
-      this.shouldListen = false;
-      this.errors$.next('Permiso de micrófono rechazado');
-    }
+    if (error === 'no-speech' || error === 'aborted') return;
+    this.shouldListen = false;
+    this.errors$.next(error === 'not-allowed' || error === 'service-not-allowed'
+      ? 'Permiso de micrófono rechazado'
+      : 'Los comandos de voz no están disponibles.');
   }
 
   private normalize(value: string) {
