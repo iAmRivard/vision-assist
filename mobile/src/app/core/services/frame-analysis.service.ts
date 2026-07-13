@@ -5,7 +5,7 @@ import { Injectable } from '@angular/core'; import { visionConfig } from '../con
     let sum=0,sumSq=0,sharp=0,motion=0,count=0;
     for(let y=y0;y<y1;y++) for(let x=x0;x<x1;x++){ const i=(y*width+x)*4; const gray=(data[i]!+data[i+1]!+data[i+2]!)/3; sum+=gray;sumSq+=gray*gray;count++;
       if(x>x0){const p=i-4;sharp+=Math.abs(gray-(data[p]!+data[p+1]!+data[p+2]!)/3)}
-      if(previous){const pd=previous.data;const old=(pd[i]!+pd[i+1]!+pd[i+2]!)/3;if(Math.abs(gray-old)>18)motion++;}
+      if(previous){const pd=previous.data;const old=(pd[i]!+pd[i+1]!+pd[i+2]!)/3;if(Math.abs(gray-old)>visionConfig.motionPixelDifferenceThreshold)motion++;}
     }
     const brightness=sum/count, variance=sumSq/count-brightness*brightness, sharpness=sharp/count, motionScore=previous?motion/count:1;
     return {brightness,variance,sharpness,motionScore,hasContent:variance>=visionConfig.minimumVariance,acceptableExposure:brightness>=visionConfig.minimumBrightness&&brightness<=visionConfig.maximumBrightness,sharp:sharpness>=visionConfig.minimumSharpness};
