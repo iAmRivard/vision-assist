@@ -3,7 +3,7 @@
   <div class="top"><span class="brand">VisionAssist</span><a routerLink="/history" aria-label="Historial"><ion-icon name="albums-outline"></ion-icon></a></div>
   <div class="mode" [class.active]="processingEnabled"><i></i>{{processingEnabled ? 'Análisis activo' : 'Análisis pausado'}}</div>
   <div class="guide" [attr.data-state]="state"><span></span></div><div class="flash" [class.on]="flash"></div>
-  <section class="status"><div class="state">{{message}}</div><div class="progress"><i [style.width.%]="stability*100"></i></div><small *ngIf="metrics && processingEnabled">Luz {{metrics.brightness | number:'1.0-0'}} · Movimiento {{metrics.motionScore | percent:'1.0-0'}}</small><ion-spinner *ngIf="state==='ANALYZING'"></ion-spinner><p class="error" *ngIf="state==='ERROR'">{{error}}</p></section>
+  <section class="status"><div class="state">{{message}}</div><div class="progress"><i [style.width.%]="stability*100"></i></div><small *ngIf="metrics && processingEnabled">Luz {{metrics.brightness | number:'1.0-0'}} · Movimiento {{metrics.motionScore | percent:'1.0-0'}} · Nitidez {{metrics.sharpness | number:'1.1-1'}}</small><ion-spinner *ngIf="state==='ANALYZING'"></ion-spinner><p class="error" *ngIf="state==='ERROR'">{{error}}</p></section>
   <footer>
     <ion-button class="process-toggle" size="small" [color]="processingEnabled ? 'warning' : 'success'" (click)="toggleProcessing()">{{processingEnabled ? 'Pausar análisis' : 'Comenzar análisis'}}</ion-button>
     <label>Captura automática <ion-toggle [(ngModel)]="autoCapture"></ion-toggle></label>
