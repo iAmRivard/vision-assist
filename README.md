@@ -143,6 +143,8 @@ Si el escáner muestra un error del servicio de visión, consulte los logs del b
 
 `Vision provider connection failed:` indica un problema de conexión; `Vision provider request timed out:` indica que se agotó `VISION_TIMEOUT_MS`. La URL base debe ser el prefijo de la API: el backend agrega `/chat/completions` automáticamente.
 
+Para usar `gpt-6-luna` con OpenAI, puede configurar `VISION_MODEL=gpt-6-luna` y `VISION_API_BASE_URL=https://api.openai.com/v1`. El backend omite `temperature` para la familia GPT-6 y conserva su razonamiento predeterminado; los demás modelos mantienen `temperature: 0`. La [guía oficial de GPT-6](https://developers.openai.com/api/docs/guides/latest-model) indica que `temperature` no se admite cuando el esfuerzo de razonamiento es distinto de `none`.
+
 ## Supuestos del MVP
 
 El proveedor inicial usa el protocolo de chat completions compatible con OpenAI. La señal de “objeto” es variación visual en la región central, no detección semántica. El botón “identificación incorrecta” es informativo por ahora, ya que el MVP no incluye cuentas ni entrenamiento. No se guardan imágenes ni se identifica a personas.

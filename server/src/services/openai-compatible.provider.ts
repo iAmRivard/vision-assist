@@ -31,11 +31,13 @@ export class OpenAiCompatibleVisionProvider implements VisionProvider {
   async analyzeImage(image: Buffer) {
     const controller = new AbortController();
     const timer = setTimeout(() => controller.abort(), this.env.VISION_TIMEOUT_MS);
+    // GPT-6 defaults to reasoning, where sampling parameters are unsupported.
+    const sampling = /^gpt-6(?:[.-]|$)/.test(this.env.VISION_MODEL) ? {} : { temperature: 0 };
     try {
       const response = await fetch(`${this.env.VISION_API_BASE_URL.replace(/\/$/, '')}/chat/completions`, {
         method: 'POST', signal: controller.signal,
         headers: { Authorization: `Bearer ${this.env.VISION_API_KEY}`, 'Content-Type': 'application/json' },
-        body: JSON.stringify({ model: this.env.VISION_MODEL, temperature: 0,
+        body: JSON.stringify({ model: this.env.VISION_MODEL, ...sampling,
           response_format: { type: 'json_object' }, messages: [{ role: 'user', content: [
             { type: 'text', text: visionPrompt },
             { type: 'image_url', image_url: { url: `data:image/jpeg;base64,${image.toString('base64')}` } },

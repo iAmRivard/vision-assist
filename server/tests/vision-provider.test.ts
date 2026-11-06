@@ -38,8 +38,33 @@ describe('OpenAiCompatibleVisionProvider', () => {
     expect(request?.headers).toMatchObject({ Authorization: `Bearer ${env.VISION_API_KEY}` });
     const body = JSON.parse(request?.body as string);
     expect(body.model).toBe(env.VISION_MODEL);
+    expect(body.temperature).toBe(0);
     expect(body.messages[0].content[1].image_url.url).toBe(`data:image/jpeg;base64,${image.toString('base64')}`);
     expect(console.warn).not.toHaveBeenCalled();
+  });
+
+  it.each(['gpt-6-luna', 'gpt-6.1-sol'])('supports %s with default reasoning and image input', async model => {
+    fetchMock.mockImplementation(async (_url, request) => {
+      const body = JSON.parse(request?.body as string);
+      if ('temperature' in body) {
+        return Response.json({ error: { code: 'unsupported_parameter', param: 'temperature' } }, { status: 400 });
+      }
+      return Response.json({ choices: [{ message: { content: JSON.stringify(valid) } }] });
+    });
+
+    const provider = new OpenAiCompatibleVisionProvider({
+      ...env, VISION_MODEL: model, VISION_API_BASE_URL: 'https://api.openai.com/v1',
+    });
+    expect(await provider.analyzeImage(image)).toEqual(valid);
+    const [url, request] = fetchMock.mock.calls[0]!;
+    expect(url).toBe('https://api.openai.com/v1/chat/completions');
+    const body = JSON.parse(request?.body as string);
+    expect(body.model).toBe(model);
+    expect(body).not.toHaveProperty('temperature');
+    expect(body).not.toHaveProperty('reasoning_effort');
+    expect(body.response_format).toEqual({ type: 'json_object' });
+    expect(body.messages[0].content[1].image_url.url).toBe(`data:image/jpeg;base64,${image.toString('base64')}`);
+    expect(fetchMock).toHaveBeenCalledTimes(1);
   });
 
   it.each([
