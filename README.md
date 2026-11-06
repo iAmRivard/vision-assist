@@ -131,6 +131,18 @@ Cada push y pull request ejecuta compilación y pruebas en GitHub Actions. Depen
 - **Base no disponible:** revise `docker compose ps`, `DATABASE_URL` y que la migración exista.
 - **Proveedor no disponible/JSON inválido:** verifique clave, modelo, URL base y que el proveedor soporte salida JSON y entrada visual.
 
+Si el escáner muestra un error del servicio de visión, consulte los logs del backend en Dokploy. `Vision provider request failed:` incluye el estado HTTP del proveedor, sus códigos de error y el identificador de la solicitud cuando están disponibles. No se registran la clave, las imágenes ni el mensaje completo del proveedor.
+
+| HTTP del proveedor | Qué revisar |
+|---|---|
+| `401` / `403` | `VISION_API_KEY` y permisos de acceso al proveedor/modelo |
+| `404` | `VISION_API_BASE_URL` y disponibilidad de `VISION_MODEL` |
+| `400` / `422` | Compatibilidad del modelo con imágenes, `response_format: json_object` y los parámetros enviados |
+| `429` | Límites de solicitudes y cuota o saldo de la cuenta |
+| `5xx` | Disponibilidad del proveedor |
+
+`Vision provider connection failed:` indica un problema de conexión; `Vision provider request timed out:` indica que se agotó `VISION_TIMEOUT_MS`. La URL base debe ser el prefijo de la API: el backend agrega `/chat/completions` automáticamente.
+
 ## Supuestos del MVP
 
 El proveedor inicial usa el protocolo de chat completions compatible con OpenAI. La señal de “objeto” es variación visual en la región central, no detección semántica. El botón “identificación incorrecta” es informativo por ahora, ya que el MVP no incluye cuentas ni entrenamiento. No se guardan imágenes ni se identifica a personas.
