@@ -10,7 +10,7 @@ VisionAssist es software libre bajo licencia MIT. Consulte [CONTRIBUTING.md](CON
 
 - `mobile`: Angular + Ionic + Capacitor. `getUserMedia` alimenta un `<video>`; un canvas 320×240 analiza la región central localmente. Ningún fotograma de análisis sale del teléfono.
 - `server`: API REST Express. Multer mantiene el archivo únicamente en memoria, `VisionProvider` aísla el proveedor, Zod valida su salida y `pg` persiste metadatos.
-- `postgres`: historial sin fotografías. La migración se ejecuta automáticamente al crear el contenedor.
+- `postgres`: historial sin fotografías. El backend aplica las migraciones pendientes antes de aceptar solicitudes.
 
 ## Requisitos
 
@@ -43,7 +43,9 @@ Configure `VISION_API_KEY`; nunca copie esa clave en `mobile`. Variables disponi
 | `CORS_ORIGIN` | Orígenes separados por coma |
 | `ANALYZE_RATE_LIMIT_PER_MINUTE` | Límite por IP |
 
-Para PostgreSQL sin Docker, cree la base indicada por `DATABASE_URL` y ejecute, en orden, las migraciones de `server/src/database/migrations`.
+Para PostgreSQL sin Docker, cree la base indicada por `DATABASE_URL`. Al arrancar, el backend aplica en orden las migraciones de `server/src/database/migrations` y registra las completadas en `vision_schema_migrations`. El usuario de la conexión debe tener permisos para crear y modificar las tablas y crear la extensión `pgcrypto` si todavía no existe.
+
+Las migraciones `001` y `002` también pueden ejecutarse sobre bases inicializadas previamente por Docker o manualmente: conservan los registros existentes. Los arranques simultáneos se coordinan mediante un bloqueo de PostgreSQL. Si una migración falla, se revierte la transacción y el servidor termina con error antes de abrir el puerto HTTP. `npm run build -w server` incluye los archivos SQL en `server/dist` para el arranque de producción.
 
 ## Despliegue en Dokploy
 
@@ -53,7 +55,7 @@ El `Dockerfile` de la raíz compila el backend y la PWA en un único contenedor.
 2. Exponga el puerto interno `3000` y asigne el dominio HTTPS `vision.rivasystems.dev`.
 3. Configure las variables de `server/.env.example`, usando la URL de PostgreSQL externa. En producción, `CLIENT_ID_HASH_SECRET` debe ser un secreto aleatorio de al menos 32 caracteres.
 4. Configure el healthcheck en `/api/v1/health`.
-5. Ejecute las migraciones `001` y `002` contra PostgreSQL antes del primer despliegue.
+5. Despliegue la aplicación. El backend aplica las migraciones pendientes automáticamente antes de abrir el puerto `3000`, incluida `002_add_analysis_owner.sql`, que agrega `owner_hash` a las bases existentes. Revise los mensajes `Database migration applied:` en los logs de arranque.
 
 La PWA usa `/api/v1` en el mismo origen y Android usa `https://vision.rivasystems.dev/api/v1`. En Dokploy configure `CORS_ORIGIN=https://vision.rivasystems.dev,https://localhost` antes de ejecutar `npm run cap:sync -w mobile`.
 
@@ -103,6 +105,12 @@ npm test
 ```
 
 Las pruebas cubren movimiento/hash y validación estricta de respuestas. TypeScript se compila en modo estricto.
+
+Las pruebas de integración de migraciones requieren una base PostgreSQL de pruebas y `TEST_DATABASE_URL`. Crean y eliminan esquemas aislados para verificar bases nuevas, actualización de bases existentes, reinicios, arranques simultáneos y rollback ante errores. Sin esa variable se omiten; GitHub Actions las ejecuta con PostgreSQL 16.
+
+```bash
+TEST_DATABASE_URL=postgres://vision_assist:vision_assist@localhost:5432/vision_assist_test npm test -w server
+```
 
 Cada push y pull request ejecuta compilación y pruebas en GitHub Actions. Dependabot revisa semanalmente las dependencias npm y mensualmente las acciones utilizadas por CI.
 
